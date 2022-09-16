@@ -1,3 +1,4 @@
-esptool-master
-webrepl-master
-test_*
+venv
+esp*.bin
+*.code-workspace
+/**/env
