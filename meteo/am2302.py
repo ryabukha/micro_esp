@@ -4,19 +4,20 @@ from machine import Pin
 from time import sleep
 import dht
 
-def start_measure():
-    sensor = dht.DHT22(Pin(14))
-    #sensor = dht.DHT11(Pin(14))
-
+def start_measure(data={}, period=10):
     while True:
-        try:
-            sleep(2)
-            sensor.measure()
-            temp = sensor.temperature()
-            hum = sensor.humidity()
-            temp_f = temp * (9/5) + 32.0
-            print('Temperature: %3.1f C' %temp)
-            print('Temperature: %3.1f F' %temp_f)
-            print('Humidity: %3.1f %%' %hum)
-        except OSError as e:
-            print('Failed to read sensor.')
+        sleep(period)
+        data = get_measure()
+        for k, v in data.items():
+            print(k, ": ", v)
+
+def get_measure():
+    try:
+        sensor = dht.DHT22(Pin(14))
+        sensor.measure()
+        temp = sensor.temperature()
+        hum = sensor.humidity()
+        return {"hum": hum, "temp": temp}
+    except OSError as e:
+        print('Failed to read sensor.')
+        return {}

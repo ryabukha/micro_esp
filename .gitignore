@@ -2,3 +2,4 @@ venv
 esp*.bin
 *.code-workspace
 /**/env
+meteo.conf
