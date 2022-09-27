@@ -28,3 +28,37 @@ sudo udevadm control --reload-rules
 ```
 sudo systemctl mask brltty.path
 ```
+
+esp8266-pro
+- EN -> 10kOm -> 3.3v
+- GPIO 15 -> 10kOm -> GND
+- GPIO 0 -> GND for flash
+
+
+meteo.conf:
+```
+{
+"ADAFRUIT_IO_USERNAME": "name",
+"ADAFRUIT_IO_URL": "io.adafruit.com",
+"ADAFRUIT_IO_KEY": "key",
+"WIFI_SSID": "ssid_name",
+"WIFI_PASSWORD": "password",
+"PERIOD": 10,
+"SENSORS": [
+    {
+        "NAME" : "ONE",
+        "PIN"  : 13,
+        "TOPICS": [
+            {
+                "NAME" : "path/to/topic",
+                "TYPE" : "temperature"
+            },
+            {
+                "NAME" : "path/to/topic",
+                "TYPE" : "humidity"
+            }
+        ]
+    }
+]
+}
+```

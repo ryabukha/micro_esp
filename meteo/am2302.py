@@ -11,13 +11,13 @@ def start_measure(data={}, period=10):
         for k, v in data.items():
             print(k, ": ", v)
 
-def get_measure():
+def get_measure(pin=14):
     try:
-        sensor = dht.DHT22(Pin(14))
+        sensor = dht.DHT22(Pin(pin))
         sensor.measure()
-        temp = sensor.temperature()
-        hum = sensor.humidity()
-        return {"hum": hum, "temp": temp}
+        temperature = sensor.temperature()
+        humidity = sensor.humidity()
+        return {"humidity": humidity, "temperature": temperature}
     except OSError as e:
         print('Failed to read sensor.')
         return {}

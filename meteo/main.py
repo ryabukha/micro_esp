@@ -23,24 +23,26 @@ def connect(conf):
     print("Connected to Wifi\n")
 
 def main(conf):
-    data = am2302.get_measure()
-    if data:
-        c = MQTTClient(
-            client_id=conf["CLIENT_ID"],
-            user=conf["ADAFRUIT_IO_USERNAME"],
-            server=conf["ADAFRUIT_IO_URL"],
-            password=conf["ADAFRUIT_IO_KEY"],
-            port=1883
-        )
-        c.connect()
-        temp = str(data["temp"])
-        hum = str(data["hum"])
-        c.publish(b"sergiy/feeds/temp", str.encode(temp))
-        time.sleep(conf["PERIOD"])
-        c.publish(b"sergiy/feeds/hum", str.encode(hum))
-        c.disconnect()
-        time.sleep(conf["PERIOD"])
+    for sensor in conf["SENSORS"]:
 
+        data = am2302.get_measure(pin=sensor["PIN"])
+        if data:
+            c = MQTTClient(
+                client_id=conf["CLIENT_ID"],
+                user=conf["ADAFRUIT_IO_USERNAME"],
+                server=conf["ADAFRUIT_IO_URL"],
+                password=conf["ADAFRUIT_IO_KEY"],
+                port=1883
+            )
+            c.connect()
+            for topic in sensor["TOPICS"]:
+                top = str(topic["NAME"])
+                mes = str(data[topic["TYPE"]])
+                c.publish(str.encode(top), str.encode(mes))
+                time.sleep(conf["PERIOD"])
+            c.disconnect()
+
+        time.sleep(conf["PERIOD"])
 
 if __name__ == "__main__":
     conf = read_conf()
