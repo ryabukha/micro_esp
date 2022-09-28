@@ -9,9 +9,12 @@ import time
 def read_conf():
     with open("meteo.conf") as f:
         data = json.load(f)
+    return data
+
+def print_conf(data = {}):
     for k, v in data.items():
         print(k, ": ", v)
-    return data
+
 
 def connect(conf):
     nic = network.WLAN(network.STA_IF)
@@ -39,15 +42,29 @@ def main(conf):
                 top = str(topic["NAME"])
                 mes = str(data[topic["TYPE"]])
                 c.publish(str.encode(top), str.encode(mes))
-                time.sleep(conf["PERIOD"])
+                time.sleep(1)
             c.disconnect()
 
-        time.sleep(conf["PERIOD"])
 
 if __name__ == "__main__":
+    # configure RTC.ALARM0 to be able to wake the device
+    rtc = machine.RTC()
+    rtc.irq(trigger=rtc.ALARM0, wake=machine.DEEPSLEEP)
+
+    # check if the device woke from a deep sleep
+    if machine.reset_cause() == machine.DEEPSLEEP_RESET:
+        print('woke from a deep sleep')
+
     conf = read_conf()
     conf["CLIENT_ID"] = ubinascii.hexlify(machine.unique_id())
 
+    if machine.reset_cause() != machine.DEEPSLEEP_RESET:
+        print_conf(conf)
+
     connect(conf)
-    while True:
-        main(conf)
+    main(conf)
+
+    # set RTC.ALARM0 to fire after 10 seconds (waking the device)
+    rtc.alarm(rtc.ALARM0, conf["PERIOD"]*60*1000)
+    # put the device to sleep
+    machine.deepsleep()

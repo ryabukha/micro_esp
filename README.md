@@ -33,7 +33,7 @@ esp8266-pro
 - EN -> 10kOm -> 3.3v
 - GPIO 15 -> 10kOm -> GND
 - GPIO 0 -> GND for flash
-
+- GPIO 16 -> RST for deepsleep
 
 meteo.conf:
 ```
@@ -43,18 +43,18 @@ meteo.conf:
 "ADAFRUIT_IO_KEY": "key",
 "WIFI_SSID": "ssid_name",
 "WIFI_PASSWORD": "password",
-"PERIOD": 10,
+"PERIOD": 1,  # in minutes
 "SENSORS": [
     {
         "NAME" : "ONE",
         "PIN"  : 13,
         "TOPICS": [
             {
-                "NAME" : "path/to/topic",
+                "NAME" : "adafruit_io_username/path/to/topic",
                 "TYPE" : "temperature"
             },
             {
-                "NAME" : "path/to/topic",
+                "NAME" : "adafruit_io_username/path/to/topic",
                 "TYPE" : "humidity"
             }
         ]
